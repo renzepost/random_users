@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 
 from random_users.db_classes import Location, Picture, User
 
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+
 
 def get_user_data_api(results: int = 5000) -> Dict[str, Any]:
     response = requests.get(f"https://randomuser.me/api/?results={results}")
@@ -35,8 +37,8 @@ def insert_user_data(session: Session, data: Dict[str, Any]) -> None:
             md5=item["login"]["md5"],
             sha1=item["login"]["sha1"],
             sha256=item["login"]["sha256"],
-            date_of_birth=datetime.fromisoformat(item["dob"]["date"]),
-            registered=datetime.fromisoformat(item["registered"]["date"]),
+            date_of_birth=datetime.strptime(item["dob"]["date"], DATE_FORMAT),
+            registered=datetime.strptime(item["registered"]["date"], DATE_FORMAT),
             phone=item["phone"],
             cell=item["cell"],
             id_type=item["id"]["name"],
